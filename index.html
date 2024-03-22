@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Playlist Embed</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .video-container {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div id="playlistVideos"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <script>
+    async function fetchPlaylistData() {
+      try {
+        const response = await fetch("youtube-playlist.json");
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching playlist data:", error);
+        return null;
+      }
+    }
+
+    async function renderPlaylistVideos() {
+      const playlistData = await fetchPlaylistData();
+      console.log('Playlist Data:', playlistData);
+      
+      const playlistElement = document.getElementById("playlistVideos");
+      const videos = playlistData;
+      console.log("Videos:", videos); // Log the videos array to inspect its contents
+      videos.forEach((video) => {
+        const videoId = video.snippet.resourceId.videoId;
+        const videoContainer = document.createElement("div");
+        videoContainer.classList.add("video-container");
+        videoContainer.innerHTML = `<div class="embed-responsive embed-responsive-16by9">
+                                      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/${videoId}?vq=hd1080" allowfullscreen></iframe>
+                                    </div>`;
+        playlistElement.appendChild(videoContainer);
+      });
+    }
+
+    renderPlaylistVideos();
+  </script>
+</body>
+</html>
